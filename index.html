@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sophie Neilson — backend and systems engineer. A lab for behavioral experiments on local language models with published results, and standalone Go tools pulled from an agent system.">
+<meta name="color-scheme" content="light dark">
+<title>Sophie Neilson — projects</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sophie Neilson — projects">
+<meta property="og:description" content="Backend and systems engineer. A lab for behavioral experiments on local language models with published results, and standalone Go tools pulled from an agent system.">
+<meta name="twitter:card" content="summary">
+
+<script>
+  /* Runs before paint: marks JS on, applies saved reading preferences with no flash. */
+  (function () {
+    var d = document.documentElement;
+    d.classList.add("js");
+    try {
+      var s = window.localStorage;
+      var theme = s.getItem("pf-theme");
+      if (theme === "light" || theme === "dark") {
+        d.setAttribute("data-theme", theme);
+        d.style.colorScheme = theme;
+      }
+      if (s.getItem("pf-reading") === "dyslexic") d.setAttribute("data-reading", "dyslexic");
+      if (s.getItem("pf-spacing") === "roomy") d.setAttribute("data-spacing", "roomy");
+      var scale = s.getItem("pf-scale");
+      if (scale) d.style.setProperty("--scale", scale);
+    } catch (e) {}
+  })();
+</script>
+
+<style>
+  /* ---------- fonts (self-hosted, no third-party host) ---------- */
+  @font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: normal; font-weight: 400; font-display: swap;
+    src: url("fonts/atkinson-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: italic; font-weight: 400; font-display: swap;
+    src: url("fonts/atkinson-400-italic.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: normal; font-weight: 700; font-display: swap;
+    src: url("fonts/atkinson-700.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Atkinson Hyperlegible";
+    font-style: italic; font-weight: 700; font-display: swap;
+    src: url("fonts/atkinson-700-italic.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "OpenDyslexic";
+    font-style: normal; font-weight: 400; font-display: swap;
+    src: url("fonts/opendyslexic-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "OpenDyslexic";
+    font-style: italic; font-weight: 400; font-display: swap;
+    src: url("fonts/opendyslexic-400-italic.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "OpenDyslexic";
+    font-style: normal; font-weight: 700; font-display: swap;
+    src: url("fonts/opendyslexic-700.woff2") format("woff2");
+  }
+
+  :root {
+    --paper:   #ede6d9;
+    --surface: #f5efe4;
+    --ink:     #221f1a;
+    --ink-soft:#5c5346;
+    --line:    #dbd0bd;
+    --line-soft:#e4dccb;
+    --accent:  #116e69;
+    --accent-hi:#0e5a56;
+    --live:    #4c6a3d;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+    --measure: 60ch;
+    --grain-opacity: .04;
+    --grain-blend: multiply;
+
+    --scale: 1;
+    --lh: 1.65;
+
+    font-size: calc(16px * var(--scale));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:   #1b1917;
+      --surface: #23201b;
+      --ink:     #ece4d6;
+      --ink-soft:#a99c86;
+      --line:    #332e27;
+      --line-soft:#2a2620;
+      --accent:  #54b9b1;
+      --accent-hi:#6fccc4;
+      --live:    #82a96d;
+      --grain-opacity: .05;
+      --grain-blend: screen;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#ede6d9; --surface:#f5efe4; --ink:#221f1a; --ink-soft:#5c5346;
+    --line:#dbd0bd; --line-soft:#e4dccb; --accent:#116e69; --accent-hi:#0e5a56;
+    --live:#4c6a3d; --grain-opacity:.04; --grain-blend:multiply;
+  }
+  :root[data-theme="dark"] {
+    --paper:#1b1917; --surface:#23201b; --ink:#ece4d6; --ink-soft:#a99c86;
+    --line:#332e27; --line-soft:#2a2620; --accent:#54b9b1; --accent-hi:#6fccc4;
+    --live:#82a96d; --grain-opacity:.05; --grain-blend:screen;
+  }
+
+  /* ---------- dyslexia-friendly reading mode ---------- */
+  :root[data-reading="dyslexic"] {
+    --serif: "OpenDyslexic", Georgia, serif;
+    --sans: "OpenDyslexic", system-ui, sans-serif;
+    --mono: "OpenDyslexic", ui-monospace, monospace;
+    --lh: 1.8;
+  }
+  :root[data-reading="dyslexic"] body {
+    letter-spacing: .01em;
+    word-spacing: .06em;
+  }
+  :root[data-reading="dyslexic"] .thesis,
+  :root[data-reading="dyslexic"] .proj { letter-spacing: 0; }
+
+  /* ---------- roomy line spacing ---------- */
+  :root[data-spacing="roomy"] { --lh: 1.95; }
+  :root[data-spacing="roomy"] body {
+    letter-spacing: .012em;
+    word-spacing: .09em;
+  }
+  :root[data-spacing="roomy"] p { margin-bottom: 1.6em; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: var(--lh);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---------- accessibility helpers ---------- */
+  .vh {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .skip {
+    position: absolute; left: -9999px; top: 0; z-index: 300;
+    background: var(--accent-hi); color: #fff;
+    padding: .65rem 1.1rem; border-radius: 0 0 6px 0;
+    font-family: var(--mono); font-size: .85rem; letter-spacing: .02em;
+  }
+  .skip:focus { left: 0; }
+  #main:focus { outline: none; }
+
+  .grain {
+    position: fixed; inset: 0; z-index: 200; pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 70rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3.25rem);
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .mono {
+    font-family: var(--mono);
+    font-feature-settings: "liga" 0;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ---------- reader settings ---------- */
+  .reader {
+    position: fixed; top: 1rem; right: 1rem; z-index: 210;
+    font-family: var(--mono);
+  }
+  .reader-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 2.75rem; min-height: 2.75rem;
+    font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+    color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    transition: border-color .2s ease, background-color .2s ease;
+  }
+  .reader-toggle:hover { border-color: var(--accent); }
+  .reader-toggle[aria-expanded="true"] {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .reader-panel {
+    position: absolute; top: calc(100% + .55rem); right: 0;
+    width: min(19rem, calc(100vw - 2rem));
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.1rem 1.15rem 1.25rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,.14);
+    display: flex; flex-direction: column; gap: 1.05rem;
+  }
+  .reader-panel[hidden] { display: none; }
+  .reader-panel .rtitle {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0;
+  }
+  .rgroup { display: flex; flex-direction: column; gap: .45rem; }
+  .rlabel {
+    font-size: .82rem; letter-spacing: .01em; color: var(--ink);
+    font-family: var(--sans);
+  }
+  .rbtns { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .rbtns button {
+    flex: 1 1 auto;
+    min-height: 2.4rem;
+    padding: .4rem .6rem;
+    font-family: var(--mono); font-size: .8rem;
+    color: var(--ink); background: var(--paper);
+    border: 1px solid var(--line); border-radius: 6px;
+    cursor: pointer;
+    transition: border-color .18s ease, background-color .18s ease, color .18s ease;
+  }
+  .rbtns button:hover { border-color: var(--accent); }
+  .rbtns button[aria-pressed="true"] {
+    background: var(--accent); color: var(--paper); border-color: var(--accent);
+  }
+  .reader :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    padding-top: clamp(3.5rem, 11vh, 8rem);
+    padding-bottom: clamp(2.5rem, 7vh, 5rem);
+  }
+  .masthead .eyebrow { margin-bottom: 1.6rem; }
+  .thesis {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.05rem, 5.2vw, 3.55rem);
+    line-height: 1.06;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+    max-width: 24ch;
+    margin: 0 0 1.5rem;
+  }
+  .thesis em { font-style: italic; color: var(--accent-hi); }
+  .bio {
+    max-width: var(--measure);
+    color: var(--ink-soft);
+    font-size: 1.08rem;
+    margin: 0 0 1.9rem;
+  }
+  .metaline {
+    font-size: .82rem;
+    letter-spacing: .04em;
+    color: var(--ink-soft);
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    display: inline-block;
+  }
+  .metaline .dot { color: var(--accent); padding-inline: .5rem; }
+
+  /* ---------- ledger ---------- */
+  .ledger { padding-block: 1rem clamp(3rem, 8vh, 6rem); }
+
+  .entry {
+    padding-block: clamp(2.5rem, 6vh, 4.25rem);
+    border-top: 1px solid var(--line);
+  }
+  .entry:first-child { border-top: none; }
+
+  .entry-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .domain {
+    font-size: .72rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .domain::before {
+    content: "";
+    display: inline-block;
+    width: 1.6rem; height: 1px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-right: .7rem;
+    opacity: .7;
+  }
+
+  .entry-body {
+    max-width: var(--measure);
+  }
+  .proj {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 .35rem;
+  }
+  .role {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.12rem;
+    color: var(--accent-hi);
+    margin: 0 0 1.1rem;
+  }
+  .desc {
+    max-width: var(--measure);
+    color: var(--ink-soft);
+    margin: 0 0 1.5rem;
+  }
+
+  .chips {
+    list-style: none;
+    display: flex; flex-wrap: wrap; gap: .5rem;
+    padding: 0; margin: 0 0 1.4rem;
+  }
+  .chips li {
+    font-family: var(--mono);
+    font-size: .74rem;
+    letter-spacing: .02em;
+    color: var(--ink-soft);
+    padding: .28rem .6rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+  }
+
+  .repos {
+    display: flex; flex-direction: column; gap: .35rem;
+    font-size: .84rem;
+  }
+  .repos a {
+    display: inline-flex; align-items: baseline; gap: .1rem;
+    width: fit-content;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    transition: text-decoration-color .25s ease;
+  }
+  .repos a:hover { text-decoration-color: var(--accent); }
+  .repos .arrow { color: var(--ink-soft); font-size: .78em; }
+
+  /* ---------- live demo call-to-action ---------- */
+  .live-cta {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    width: fit-content;
+    font-family: var(--mono);
+    font-size: .82rem;
+    letter-spacing: .01em;
+    color: var(--live);
+    padding: .5rem .85rem;
+    border: 1px solid var(--live);
+    border-radius: 4px;
+    margin: 0 0 1.5rem;
+    transition: background-color .25s ease;
+  }
+  .live-cta:hover {
+    background-color: color-mix(in srgb, var(--live) 12%, transparent);
+  }
+  .live-cta .live-dot {
+    flex: none;
+    width: .5rem; height: .5rem; border-radius: 50%;
+    background: var(--live);
+    animation: live-pulse 2.4s ease-out infinite;
+  }
+  .live-cta .arrow { color: var(--live); font-size: .82em; }
+  @keyframes live-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 55%, transparent); }
+    70%  { box-shadow: 0 0 0 7px color-mix(in srgb, var(--live) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 0%, transparent); }
+  }
+
+  /* ---------- colophon ---------- */
+  .colophon {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(2.25rem, 6vh, 3.5rem) clamp(3rem, 8vh, 5rem);
+    display: flex; flex-wrap: wrap; gap: 1.25rem 2.5rem;
+    align-items: baseline; justify-content: space-between;
+  }
+  .colophon .links {
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+    font-family: var(--mono); font-size: .82rem;
+  }
+  .colophon .links a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    transition: text-decoration-color .3s ease;
+  }
+  .colophon .links a:hover { text-decoration-color: var(--accent); }
+  .colophon .note {
+    font-family: var(--mono); font-size: .74rem;
+    color: var(--ink-soft); letter-spacing: .02em;
+    margin: 0;
+  }
+
+  /* ---------- reveal (only when JS runs; no-JS shows all) ---------- */
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+  .js .masthead .reveal:nth-child(1) { transition-delay: .05s; }
+  .js .masthead .reveal:nth-child(2) { transition-delay: .16s; }
+  .js .masthead .reveal:nth-child(3) { transition-delay: .28s; }
+  .js .masthead .reveal:nth-child(4) { transition-delay: .40s; }
+
+  /* ---------- high-contrast preference ---------- */
+  @media (prefers-contrast: more) {
+    :root { --ink-soft: var(--ink); --line: #8a7f6a; }
+    .repos a, .colophon .links a { text-decoration-color: currentColor; }
+    .chips li { border-color: var(--ink-soft); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    .live-cta .live-dot { animation: none; }
+    .repos a, .colophon .links a, .reader-toggle, .rbtns button { transition: none; }
+  }
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="grain" aria-hidden="true"></div>
+
+<div class="reader">
+  <button class="reader-toggle" type="button" aria-label="Reading settings" aria-expanded="false" aria-controls="reader-panel">
+    <span aria-hidden="true">Aa</span>
+  </button>
+  <div class="reader-panel" id="reader-panel" role="group" aria-label="Reading settings" hidden>
+    <p class="rtitle">Reading settings</p>
+
+    <div class="rgroup" role="group" aria-label="Theme">
+      <span class="rlabel">Theme</span>
+      <div class="rbtns">
+        <button type="button" data-theme-set="auto"  aria-pressed="true">Auto</button>
+        <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-set="dark"  aria-pressed="false">Dark</button>
+      </div>
+    </div>
+
+    <div class="rgroup" role="group" aria-label="Text size">
+      <span class="rlabel">Text size</span>
+      <div class="rbtns">
+        <button type="button" data-scale="down"  aria-label="Decrease text size">A&minus;</button>
+        <button type="button" data-scale="reset">Reset</button>
+        <button type="button" data-scale="up"    aria-label="Increase text size">A+</button>
+      </div>
+    </div>
+
+    <div class="rgroup" role="group" aria-label="Reading font">
+      <span class="rlabel">Reading font</span>
+      <div class="rbtns">
+        <button type="button" data-font-set="default"  aria-pressed="true">Default</button>
+        <button type="button" data-font-set="dyslexic" aria-pressed="false">Dyslexia-friendly</button>
+      </div>
+    </div>
+
+    <div class="rgroup" role="group" aria-label="Line spacing">
+      <span class="rlabel">Line spacing</span>
+      <div class="rbtns">
+        <button type="button" data-space-set="normal" aria-pressed="true">Standard</button>
+        <button type="button" data-space-set="roomy"  aria-pressed="false">Roomy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="masthead wrap">
+  <p class="eyebrow reveal">Sophie Neilson</p>
+  <h1 class="thesis reveal">I build the systems other software <em>runs on</em>, and the front ends that drive them.</h1>
+  <p class="bio reveal">Backend &amp; systems engineer, mostly in Go and TypeScript, usually with Postgres or SQLite underneath. When a system needs a front end, I build that too. The projects below are ones I build and run: a lab I use to measure how small language models behave and publish the results, and three pieces I pulled out of a larger agent system, still in active development, each cleaned up to stand on its own.</p>
+  <p class="metaline mono reveal">Go<span class="dot" aria-hidden="true">·</span>TypeScript<span class="dot" aria-hidden="true">·</span>React<span class="dot" aria-hidden="true">·</span>Postgres<span class="dot" aria-hidden="true">·</span>SQLite<span class="dot" aria-hidden="true">·</span>llama.cpp</p>
+</header>
+
+<main id="main" class="ledger wrap" tabindex="-1">
+
+  <article class="entry reveal">
+    <div class="entry-head"><span class="domain mono">Experiment harness</span></div>
+    <div class="entry-body">
+      <div class="entry-text">
+        <h2 class="proj">corpos-lab</h2>
+        <p class="role">Controlled behavioral experiments on local language models.</p>
+        <p class="desc">Language models fail in consistent places: decision points where the locally obvious move is the wrong one. This lab measures whether describing those points back to a model changes what it does, and whether the description format does the work or just the information it carries. It runs studies against local models with llama.cpp, scores each run against a declared rubric, and records what actually executed — the model the server reports, its build, the sampler, the processor, and the repo commit. Each assay runs in a single-use container pinned by image digest, and a hard gate holds the code to a 95% coverage floor. The instrument is Go; the findings are eight preprints on Zenodo.</p>
+        <ul class="chips" role="list">
+          <li>Go</li><li>llama.cpp</li><li>Docker</li><li>reproducible runs</li>
+        </ul>
+        <div class="repos mono">
+          <a href="https://github.com/sophdn/corpos-lab">github.com/sophdn/corpos-lab<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22542746">Phenomenological descriptions induce analysis-mode behavior · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22761018">Content over format, and how grounding recovers execution · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22846123">Comprehension as compliance · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22556875">Canon suppression in corpus-loaded assessment · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22716214">Duty or corpus: guidance form is model-dependent · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22726758">Derived or observed: a first-principles duty's coverage · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22716131">Correct verdicts, wrong field: attribution vs capability · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://doi.org/10.5281/zenodo.22575822">Thinking-trace analysis · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://orcid.org/0009-0001-2430-1743">ORCID 0009-0001-2430-1743<span class="arrow" aria-hidden="true"> ↗</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="entry reveal">
+    <div class="entry-head"><span class="domain mono">Library</span></div>
+    <div class="entry-body">
+      <div class="entry-text">
+        <h2 class="proj">model-router</h2>
+        <p class="role">A cost-aware router that picks which model tier handles each turn.</p>
+        <p class="desc">Running every step of an agent on a frontier model is simple and expensive. This library starts each turn on the cheapest model that might do the job and climbs to a stronger one only when the turn gives it a concrete reason — a repeated tool error, a parse failure, a mid-turn fault — then walks back down when the trouble passes. It is pure Go with no dependencies, and every model call sits behind one small interface, so the whole routing engine is tested with no model and no network. A runnable demo prints the tier decisions on a fake ladder.</p>
+        <ul class="chips" role="list">
+          <li>Go</li><li>zero dependencies</li><li>sans-IO</li><li>table-tested</li>
+        </ul>
+        <div class="repos mono">
+          <a href="https://github.com/sophdn/model-router">github.com/sophdn/model-router<span class="arrow" aria-hidden="true"> ↗</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="entry reveal">
+    <div class="entry-head"><span class="domain mono">MCP server</span></div>
+    <div class="entry-body">
+      <div class="entry-text">
+        <h2 class="proj">library-mcp</h2>
+        <p class="role">A Model Context Protocol server for a classified reference library.</p>
+        <p class="desc">A small server that gives an AI agent a reference library it can read and write. Each entry is a source filed under a Dewey number, with short notes on what it establishes and when to reach for it. It speaks the Model Context Protocol over stdio and keeps everything in one SQLite file, so it runs with nothing else attached. I pulled it out of a larger agent system, still in active development, gave it its own tool surface and its own schema, and it stands on its own. Pure Go, no C toolchain.</p>
+        <ul class="chips" role="list">
+          <li>Go</li><li>MCP</li><li>SQLite</li><li>no CGO</li>
+        </ul>
+        <div class="repos mono">
+          <a href="https://github.com/sophdn/library-mcp">github.com/sophdn/library-mcp<span class="arrow" aria-hidden="true"> ↗</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="entry reveal">
+    <div class="entry-head"><span class="domain mono">CLI tool</span></div>
+    <div class="entry-body">
+      <div class="entry-text">
+        <h2 class="proj">corpos-gate</h2>
+        <p class="role">A stack-agnostic gate a repo declares as data and runs across languages.</p>
+        <p class="desc">Every repo grows a bespoke pre-commit script that drifts from the next one's. This tool is the one orchestrator behind them. A repo lists the checks it wants in a gate.yml (format, lint, build, tests, a coverage floor, a vulnerability scan) at one of three nested stages, and corpos-gate runs the plan. It drives each language's own tools, so the gate matches how the project is already built. It covers Go, TypeScript, and Python today, and can extend to any language. Point it at an existing app and init detects the stack and seeds the coverage floor from the app's own config. One built-in check refuses any commit that weakens the gate. The core is sans-IO, and the repo gates itself with its own binary in CI.</p>
+        <ul class="chips" role="list">
+          <li>Go</li><li>CI gate</li><li>Go · TS · Python</li><li>self-gating</li>
+        </ul>
+        <div class="repos mono">
+          <a href="https://github.com/sophdn/corpos-gate">github.com/sophdn/corpos-gate<span class="arrow" aria-hidden="true"> ↗</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer class="colophon wrap">
+  <div class="links">
+    <a href="https://github.com/sophdn">github.com/sophdn</a>
+    <a href="mailto:sophiedneilson@gmail.com">sophiedneilson@gmail.com</a>
+  </div>
+  <p class="note">Single static HTML page · hand-built, no framework · 2026</p>
+</footer>
+
+<script>
+  /* ---------- scroll reveal ---------- */
+  (function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var items = document.querySelectorAll(".reveal");
+    if (reduce || !("IntersectionObserver" in window)) {
+      items.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
+    items.forEach(function (el) { io.observe(el); });
+  })();
+
+  /* ---------- reader settings ---------- */
+  (function () {
+    var root = document.documentElement;
+    var toggle = document.querySelector(".reader-toggle");
+    var panel = document.getElementById("reader-panel");
+    if (!toggle || !panel) return;
+
+    function store(key, value) {
+      try {
+        if (value === null) window.localStorage.removeItem(key);
+        else window.localStorage.setItem(key, value);
+      } catch (e) {}
+    }
+    function press(selector, matchAttr, activeValue) {
+      document.querySelectorAll(selector).forEach(function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute(matchAttr) === activeValue ? "true" : "false");
+      });
+    }
+
+    /* reflect the state the head script already applied */
+    function sync() {
+      press("[data-theme-set]", "data-theme-set", root.getAttribute("data-theme") || "auto");
+      press("[data-font-set]", "data-font-set", root.getAttribute("data-reading") === "dyslexic" ? "dyslexic" : "default");
+      press("[data-space-set]", "data-space-set", root.getAttribute("data-spacing") === "roomy" ? "roomy" : "normal");
+    }
+    sync();
+
+    /* open / close */
+    function open() {
+      panel.hidden = false;
+      toggle.setAttribute("aria-expanded", "true");
+      var first = panel.querySelector("button");
+      if (first) first.focus();
+    }
+    function close(returnFocus) {
+      panel.hidden = true;
+      toggle.setAttribute("aria-expanded", "false");
+      if (returnFocus) toggle.focus();
+    }
+    toggle.addEventListener("click", function () {
+      if (panel.hidden) open(); else close(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) close(true);
+    });
+    document.addEventListener("click", function (e) {
+      if (!panel.hidden && !panel.contains(e.target) && !toggle.contains(e.target)) close(false);
+    });
+
+    /* theme */
+    document.querySelectorAll("[data-theme-set]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var v = b.getAttribute("data-theme-set");
+        if (v === "auto") {
+          root.removeAttribute("data-theme");
+          root.style.colorScheme = "";
+          store("pf-theme", null);
+        } else {
+          root.setAttribute("data-theme", v);
+          root.style.colorScheme = v;
+          store("pf-theme", v);
+        }
+        press("[data-theme-set]", "data-theme-set", v);
+      });
+    });
+
+    /* reading font */
+    document.querySelectorAll("[data-font-set]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var v = b.getAttribute("data-font-set");
+        if (v === "dyslexic") { root.setAttribute("data-reading", "dyslexic"); store("pf-reading", "dyslexic"); }
+        else { root.removeAttribute("data-reading"); store("pf-reading", null); }
+        press("[data-font-set]", "data-font-set", v);
+      });
+    });
+
+    /* line spacing */
+    document.querySelectorAll("[data-space-set]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var v = b.getAttribute("data-space-set");
+        if (v === "roomy") { root.setAttribute("data-spacing", "roomy"); store("pf-spacing", "roomy"); }
+        else { root.removeAttribute("data-spacing"); store("pf-spacing", null); }
+        press("[data-space-set]", "data-space-set", v);
+      });
+    });
+
+    /* text size */
+    var MIN = 0.85, MAX = 1.5, STEP = 0.1;
+    function currentScale() {
+      var v = parseFloat(getComputedStyle(root).getPropertyValue("--scale"));
+      return isNaN(v) ? 1 : v;
+    }
+    function setScale(v) {
+      v = Math.min(MAX, Math.max(MIN, Math.round(v * 100) / 100));
+      root.style.setProperty("--scale", v);
+      store("pf-scale", v === 1 ? null : String(v));
+    }
+    document.querySelectorAll("[data-scale]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var a = b.getAttribute("data-scale");
+        if (a === "up") setScale(currentScale() + STEP);
+        else if (a === "down") setScale(currentScale() - STEP);
+        else { root.style.removeProperty("--scale"); store("pf-scale", null); }
+      });
+    });
+  })();
+</script>
