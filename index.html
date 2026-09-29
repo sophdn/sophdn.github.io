@@ -278,6 +278,16 @@
       top: calc(clamp(3.5rem, 11vh, 8rem) - 1.56rem);
       right: clamp(1.25rem, 5vw, 3.25rem);
     }
+    /* The metaline is one unbroken string with no spaces, so it cannot wrap.
+       Cap it at the container width and let it scroll sideways on its own,
+       instead of pushing the whole page wide. */
+    .metaline {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
   }
 
   /* ---------- masthead ---------- */
