@@ -368,22 +368,27 @@
   }
 
   .repos {
-    display: flex; flex-direction: column; align-items: flex-end; gap: .35rem;
+    display: flex; flex-direction: column; gap: .35rem;
     font-size: .84rem;
   }
   .repos a {
-    display: block;
-    width: fit-content;
-    max-width: 100%;
-    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    text-decoration: none;
+  }
+  .repos a .body {
+    text-align: left;
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
     text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
     transition: text-decoration-color .25s ease;
   }
-  .repos a:hover { text-decoration-color: var(--accent); }
-  .repos .arrow { display: inline-block; color: var(--ink-soft); font-size: .78em; }
+  .repos a:hover .body { text-decoration-color: var(--accent); }
+  .repos .arrow { color: var(--ink-soft); font-size: 1.15em; }
 
   /* ---------- collapsible paper list ---------- */
   .papers {
@@ -579,9 +584,9 @@
           <li>Go</li><li>llama.cpp</li><li>Docker</li><li>reproducible runs</li>
         </ul>
         <div class="repos mono">
-          <a href="https://github.com/sophdn/corpos-lab">github.com/sophdn/corpos-lab<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://github.com/sophdn/corpos-lab/blob/main/INQUIRY.md">The lab notebook: what changed the method · INQUIRY.md<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://orcid.org/0009-0001-2430-1743">ORCID 0009-0001-2430-1743<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://github.com/sophdn/corpos-lab"><span class="body">github.com/sophdn/corpos-lab</span><span class="arrow" aria-hidden="true">↗</span></a>
+          <a href="https://github.com/sophdn/corpos-lab/blob/main/INQUIRY.md"><span class="body">The lab notebook: what changed the method · INQUIRY.md</span><span class="arrow" aria-hidden="true">↗</span></a>
+          <a href="https://orcid.org/0009-0001-2430-1743"><span class="body">ORCID 0009-0001-2430-1743</span><span class="arrow" aria-hidden="true">↗</span></a>
         </div>
         <details class="papers">
           <summary>Eight preprints on Zenodo, and the finding from each</summary>
@@ -635,7 +640,7 @@
           <li>Go</li><li>zero dependencies</li><li>sans-IO</li><li>table-tested</li>
         </ul>
         <div class="repos mono">
-          <a href="https://github.com/sophdn/model-router">github.com/sophdn/model-router<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://github.com/sophdn/model-router"><span class="body">github.com/sophdn/model-router</span><span class="arrow" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
@@ -652,7 +657,7 @@
           <li>Go</li><li>MCP</li><li>SQLite</li><li>no CGO</li>
         </ul>
         <div class="repos mono">
-          <a href="https://github.com/sophdn/library-mcp">github.com/sophdn/library-mcp<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://github.com/sophdn/library-mcp"><span class="body">github.com/sophdn/library-mcp</span><span class="arrow" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
@@ -669,7 +674,7 @@
           <li>Go</li><li>CI gate</li><li>Go · TS · Python</li><li>self-gating</li>
         </ul>
         <div class="repos mono">
-          <a href="https://github.com/sophdn/corpos-gate">github.com/sophdn/corpos-gate<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://github.com/sophdn/corpos-gate"><span class="body">github.com/sophdn/corpos-gate</span><span class="arrow" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
