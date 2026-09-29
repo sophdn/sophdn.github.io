@@ -368,12 +368,14 @@
   }
 
   .repos {
-    display: flex; flex-direction: column; gap: .35rem;
+    display: flex; flex-direction: column; align-items: flex-end; gap: .35rem;
     font-size: .84rem;
   }
   .repos a {
-    display: inline-flex; align-items: baseline; gap: .1rem;
+    display: block;
     width: fit-content;
+    max-width: 100%;
+    text-align: right;
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
@@ -381,7 +383,55 @@
     transition: text-decoration-color .25s ease;
   }
   .repos a:hover { text-decoration-color: var(--accent); }
-  .repos .arrow { color: var(--ink-soft); font-size: .78em; }
+  .repos .arrow { display: inline-block; color: var(--ink-soft); font-size: .78em; }
+
+  /* ---------- collapsible paper list ---------- */
+  .papers {
+    max-width: var(--measure);
+    margin-top: 1.4rem;
+    font-size: .84rem;
+  }
+  .papers > summary {
+    cursor: pointer;
+    width: fit-content;
+    font-family: var(--mono);
+    letter-spacing: .02em;
+    color: var(--accent);
+  }
+  .papers > summary:hover { color: var(--accent-hi); }
+  .papers > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .papers ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.1rem 0 0;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .papers li {
+    padding-left: .95rem;
+    border-left: 2px solid var(--line);
+  }
+  .papers li a {
+    font-family: var(--sans);
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .papers li a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .papers .arrow { color: var(--ink-soft); font-size: .78em; }
+  .papers .take {
+    display: block;
+    margin-top: .3rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
 
   /* ---------- live demo call-to-action ---------- */
   .live-cta {
@@ -511,8 +561,8 @@
 
 <header class="masthead wrap">
   <p class="eyebrow reveal">Sophie Neilson</p>
-  <h1 class="thesis reveal">I build the systems other software <em>runs on</em>, and the front ends that drive them.</h1>
-  <p class="bio reveal">Backend &amp; systems engineer, mostly in Go and TypeScript, usually with Postgres or SQLite underneath. When a system needs a front end, I build that too. The projects below are ones I build and run: a lab I use to measure how small language models behave and publish the results, and three pieces I pulled out of a larger agent system, still in active development, each cleaned up to stand on its own.</p>
+  <h1 class="thesis reveal">I build the systems other software <em>runs on</em>, lately the ones that make AI agents cheaper, measurable, and reliable.</h1>
+  <p class="bio reveal">Backend &amp; systems engineer, mostly in Go and TypeScript, usually with Postgres or SQLite underneath. When a system needs a front end, I build that too. The projects below are ones I build and run: a lab I use to measure how small language models behave and publish the results, and three components I pulled out of corpos, the private agent operating system I have built in Go, which is functional and in active development. Each component is cleaned up to stand on its own. The corpos- prefix marks what belongs to that system. corpos-lab and corpos-gate carry it; model-router and library-mcp came out of the same system under their own names.</p>
   <p class="metaline mono reveal">Go<span class="dot" aria-hidden="true">·</span>TypeScript<span class="dot" aria-hidden="true">·</span>React<span class="dot" aria-hidden="true">·</span>Postgres<span class="dot" aria-hidden="true">·</span>SQLite<span class="dot" aria-hidden="true">·</span>llama.cpp</p>
 </header>
 
@@ -524,22 +574,52 @@
       <div class="entry-text">
         <h2 class="proj">corpos-lab</h2>
         <p class="role">Controlled behavioral experiments on local language models.</p>
-        <p class="desc">Language models fail in consistent places: decision points where the locally obvious move is the wrong one. This lab measures whether describing those points back to a model changes what it does, and whether the description format does the work or just the information it carries. It runs studies against local models with llama.cpp, scores each run against a declared rubric, and records what actually executed — the model the server reports, its build, the sampler, the processor, and the repo commit. Each assay runs in a single-use container pinned by image digest, and a hard gate holds the code to a 95% coverage floor. The instrument is Go; the findings are eight preprints on Zenodo.</p>
+        <p class="desc">Language models fail in consistent places: decision points where the locally obvious move is the wrong one. This lab measures whether describing those points back to a model changes what it does, and whether the description format does the work or just the information it carries. It runs studies against local models with llama.cpp, scores each run against a declared rubric, and records what actually executed — the model the server reports, its build, the sampler, the processor, and the repo commit. Each assay runs in a single-use container pinned by image digest, and a hard gate holds the code to a 95% coverage floor. The instrument is Go; the findings are eight preprints on Zenodo. An earlier version ran on a strict pre-registration charter that turned improving the method into a kind of failure; I retired it, documented why, and rebuilt the lab around recording what each run actually did.</p>
         <ul class="chips" role="list">
           <li>Go</li><li>llama.cpp</li><li>Docker</li><li>reproducible runs</li>
         </ul>
         <div class="repos mono">
           <a href="https://github.com/sophdn/corpos-lab">github.com/sophdn/corpos-lab<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22542746">Phenomenological descriptions induce analysis-mode behavior · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22761018">Content over format, and how grounding recovers execution · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22846123">Comprehension as compliance · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22556875">Canon suppression in corpus-loaded assessment · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22716214">Duty or corpus: guidance form is model-dependent · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22726758">Derived or observed: a first-principles duty's coverage · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22716131">Correct verdicts, wrong field: attribution vs capability · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
-          <a href="https://doi.org/10.5281/zenodo.22575822">Thinking-trace analysis · Zenodo<span class="arrow" aria-hidden="true"> ↗</span></a>
+          <a href="https://github.com/sophdn/corpos-lab/blob/main/INQUIRY.md">The lab notebook: what changed the method · INQUIRY.md<span class="arrow" aria-hidden="true"> ↗</span></a>
           <a href="https://orcid.org/0009-0001-2430-1743">ORCID 0009-0001-2430-1743<span class="arrow" aria-hidden="true"> ↗</span></a>
         </div>
+        <details class="papers">
+          <summary>Eight preprints on Zenodo, and the finding from each</summary>
+          <ul role="list">
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22542746">Phenomenological descriptions induce analysis-mode behavior<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">Describe a decision to a small model instead of telling it what to do, and it analyzes the description rather than acting; a concrete action spec brings the action back.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22761018">Content over format, and how grounding recovers execution<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">What suppresses action is the information, not the descriptive format; a plain rule carrying the same content suppresses it just as much, and grounding the guidance in the concrete domain is what restores execution, across four models.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22846123">Comprehension as compliance<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">The synthesis of the program: grounded content, not wording, moves a small model to act, and giving it a tool loop recovers many decisions it had only described, though some gaps survive.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22556875">Canon suppression in corpus-loaded assessment<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">An evaluator loaded with a project's own framework missed real findings that a fresh observer caught, a caution for anyone who scores agent output with a model that already knows the system.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22716214">Duty or corpus: guidance form is model-dependent<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">Whether the form of an instruction changes behavior depends on the model: a prescriptive duty beat an equivalent descriptive version on one model, tied on another, and helped on neither for a third.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22726758">Derived or observed: a first-principles duty's coverage<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">A procedure written from first principles reads as self-contained but prevents no more failures than no method at all, and a hazard the task cannot reveal gets covered only once you name its category.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22716131">Correct verdicts, wrong field: attribution vs capability<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">A model can give the right answer while misreporting what drove it, so verdict accuracy and the model's own account of its reasoning are both unsafe as proof that the field you intended did the work.</span>
+            </li>
+            <li>
+              <a href="https://doi.org/10.5281/zenodo.22575822">Thinking-trace analysis<span class="arrow" aria-hidden="true"> ↗</span></a>
+              <span class="take">A method for mining an agent's planning text to find recurring failure points, and to tell whether the overhead is the system's fault or the agent's, which decides how you fix it.</span>
+            </li>
+          </ul>
+        </details>
       </div>
     </div>
   </article>
@@ -549,8 +629,8 @@
     <div class="entry-body">
       <div class="entry-text">
         <h2 class="proj">model-router</h2>
-        <p class="role">A cost-aware router that picks which model tier handles each turn.</p>
-        <p class="desc">Running every step of an agent on a frontier model is simple and expensive. This library starts each turn on the cheapest model that might do the job and climbs to a stronger one only when the turn gives it a concrete reason — a repeated tool error, a parse failure, a mid-turn fault — then walks back down when the trouble passes. It is pure Go with no dependencies, and every model call sits behind one small interface, so the whole routing engine is tested with no model and no network. A runnable demo prints the tier decisions on a fake ladder.</p>
+        <p class="role">Start cheap, escalate on evidence, cap the frontier.</p>
+        <p class="desc">Running every step of an agent on a frontier model is simple and expensive. This library starts each turn on the cheapest model that might do the job and climbs to a stronger one only when the turn gives it a concrete reason — a repeated tool error, a parse failure, a mid-turn fault — then walks back down when the trouble passes. A frontier budget caps how often any turn can reach the top tier. It is pure Go with no dependencies, and every model call sits behind one small interface, so the whole routing engine is tested with no model and no network. A runnable demo prints the tier decisions on a fake ladder.</p>
         <ul class="chips" role="list">
           <li>Go</li><li>zero dependencies</li><li>sans-IO</li><li>table-tested</li>
         </ul>
@@ -567,7 +647,7 @@
       <div class="entry-text">
         <h2 class="proj">library-mcp</h2>
         <p class="role">A Model Context Protocol server for a classified reference library.</p>
-        <p class="desc">A small server that gives an AI agent a reference library it can read and write. Each entry is a source filed under a Dewey number, with short notes on what it establishes and when to reach for it. It speaks the Model Context Protocol over stdio and keeps everything in one SQLite file, so it runs with nothing else attached. I pulled it out of a larger agent system, still in active development, gave it its own tool surface and its own schema, and it stands on its own. Pure Go, no C toolchain.</p>
+        <p class="desc">A small server that gives an AI agent a reference library it can read and write. Each entry is a source filed under a Dewey number, with three short notes: what it establishes, what question it answers, and when to reach for it. Those notes let the agent judge whether a source is worth opening before it spends context reading it. It speaks the Model Context Protocol over stdio and keeps everything in one SQLite file, so it runs with nothing else attached. Pure Go, no C toolchain.</p>
         <ul class="chips" role="list">
           <li>Go</li><li>MCP</li><li>SQLite</li><li>no CGO</li>
         </ul>
@@ -584,7 +664,7 @@
       <div class="entry-text">
         <h2 class="proj">corpos-gate</h2>
         <p class="role">A stack-agnostic gate a repo declares as data and runs across languages.</p>
-        <p class="desc">Every repo grows a bespoke pre-commit script that drifts from the next one's. This tool is the one orchestrator behind them. A repo lists the checks it wants in a gate.yml (format, lint, build, tests, a coverage floor, a vulnerability scan) at one of three nested stages, and corpos-gate runs the plan. It drives each language's own tools, so the gate matches how the project is already built. It covers Go, TypeScript, and Python today, and can extend to any language. Point it at an existing app and init detects the stack and seeds the coverage floor from the app's own config. One built-in check refuses any commit that weakens the gate. The core is sans-IO, and the repo gates itself with its own binary in CI.</p>
+        <p class="desc">Every repo grows a bespoke pre-commit script that drifts from the next one's. This tool is the one orchestrator behind them. A repo lists the checks it wants in a gate.yml (format, lint, build, tests, a coverage floor, a vulnerability scan) at one of three nested stages, and corpos-gate runs the plan. It drives each language's own tools, so the gate matches how the project is already built. It covers Go, TypeScript, and Python today, and can extend to any language. Point it at an existing app and init detects the stack and seeds the coverage floor from the app's own config. One built-in check refuses any commit that weakens the gate. The core is sans-IO, and the repo gates itself with its own binary in CI, at 97.6% coverage today against its own 95% floor. corpos-lab runs on a gate.yml of its own, so the two tools gate each other.</p>
         <ul class="chips" role="list">
           <li>Go</li><li>CI gate</li><li>Go · TS · Python</li><li>self-gating</li>
         </ul>
