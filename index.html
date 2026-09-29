@@ -263,6 +263,23 @@
     outline-offset: 2px;
   }
 
+  /* ---------- reader control: in the page flow on mobile and tablet ----------
+     The fixed control is pinned to the viewport. On a narrow screen it drifts
+     right of the content column and can add horizontal scroll. On screens up to
+     64rem wide, place the control in the page flow at the content's top-right
+     corner, with the bottom of the control level with the bottom of the
+     "Sophie Neilson" eyebrow. The right value matches the .wrap side padding.
+     The top value is the masthead top padding (the eyebrow's top) minus the
+     amount the 2.75rem control is taller than the ~1.19rem eyebrow line, so the
+     two bottom edges align. Desktop keeps the fixed control. */
+  @media (max-width: 64rem) {
+    .reader {
+      position: absolute;
+      top: calc(clamp(3.5rem, 11vh, 8rem) - 1.56rem);
+      right: clamp(1.25rem, 5vw, 3.25rem);
+    }
+  }
+
   /* ---------- masthead ---------- */
   .masthead {
     padding-top: clamp(3.5rem, 11vh, 8rem);
