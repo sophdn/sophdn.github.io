@@ -637,7 +637,7 @@
         <p class="role">Start cheap, escalate on evidence, cap the frontier.</p>
         <p class="desc">Running every step of an agent on a frontier model is simple and expensive. This library starts each turn on the cheapest model that might do the job and climbs to a stronger one only when the turn gives it a concrete reason — a repeated tool error, a parse failure, a mid-turn fault — then walks back down when the trouble passes. A frontier budget caps how often any turn can reach the top tier. It is pure Go with no dependencies, and every model call sits behind one small interface, so the whole routing engine is tested with no model and no network. A runnable demo prints the tier decisions on a fake ladder.</p>
         <ul class="chips" role="list">
-          <li>Go</li><li>zero dependencies</li><li>sans-IO</li><li>table-tested</li>
+          <li>Go</li><li>zero dependencies</li><li>sans-IO</li>
         </ul>
         <div class="repos mono">
           <a href="https://github.com/sophdn/model-router"><span class="body">github.com/sophdn/model-router</span><span class="arrow" aria-hidden="true">↗</span></a>
@@ -669,7 +669,7 @@
       <div class="entry-text">
         <h2 class="proj">corpos-gate</h2>
         <p class="role">A stack-agnostic gate a repo declares as data and runs across languages.</p>
-        <p class="desc">Every repo grows a bespoke pre-commit script that drifts from the next one's. This tool is the one orchestrator behind them. A repo lists the checks it wants in a gate.yml (format, lint, build, tests, a coverage floor, a vulnerability scan) at one of three nested stages, and corpos-gate runs the plan. It drives each language's own tools, so the gate matches how the project is already built. It covers Go, TypeScript, and Python today, and can extend to any language. Point it at an existing app and init detects the stack and seeds the coverage floor from the app's own config. One built-in check refuses any commit that weakens the gate. The core is sans-IO, and the repo gates itself with its own binary in CI, at 97.6% coverage today against its own 95% floor. corpos-lab runs on a gate.yml of its own, so the two tools gate each other.</p>
+        <p class="desc">Every repo grows a bespoke pre-commit script that drifts from the next one's. This tool is the one orchestrator behind them. A repo lists the checks it wants in a gate.yml (format, lint, build, tests, a coverage floor, a vulnerability scan) at one of three nested stages, and corpos-gate runs the plan. It drives each language's own tools, so the gate matches how the project is already built. It covers Go, TypeScript, and Python today, and can extend to any language. Point it at an existing app and init detects the stack and seeds the coverage floor from the app's own config. One built-in check refuses any commit that weakens the gate. The core is sans-IO, and the repo gates itself with its own binary in CI, at 97.6% coverage today against its own 95% floor. corpos-lab runs on a gate.yml of its own, so corpos-gate gates it too.</p>
         <ul class="chips" role="list">
           <li>Go</li><li>CI gate</li><li>Go · TS · Python</li><li>self-gating</li>
         </ul>
